@@ -12,17 +12,17 @@
 </head>
 <body>
 
-<sql:setDataSource
-        var="library"
-        driver="org.sqlite.JDBC"
-        url="jdbc:sqlite:./db/onlinelibrary.db"
-/>
-<sql:query var="listAuthor" dataSource="${library}">
-    SELECT * FROM author;
-</sql:query>
-<sql:query var="listGenre" dataSource="${library}">
-    SELECT * FROM genre;
-</sql:query>
+<%--<sql:setDataSource--%>
+        <%--var="library"--%>
+        <%--driver="org.sqlite.JDBC"--%>
+        <%--url="jdbc:sqlite:./db/onlinelibrary.db"--%>
+<%--/>--%>
+<%--<sql:query var="listAuthor" dataSource="${library}">--%>
+    <%--SELECT * FROM author;--%>
+<%--</sql:query>--%>
+<%--<sql:query var="listGenre" dataSource="${library}">--%>
+    <%--SELECT * FROM genre;--%>
+<%--</sql:query>--%>
 
 <div align="center">
 
@@ -39,7 +39,7 @@
                 <td>
                     <select name="author name">
 
-                    <c:forEach var="author" items="${listAuthor.rows}">
+                    <c:forEach var="author" items="${listAuthor}">
                         <option value=<c:out value="${author.id}"/> ><c:out value="${author.authorname}"/></option>
                     </c:forEach>
                     </select>
@@ -50,7 +50,7 @@
                 <td>
                     <select name="genre">
 
-                        <c:forEach var="genre" items="${listGenre.rows}">
+                        <c:forEach var="genre" items="${listGenres}">
                             <option value=<c:out value="${genre.id}"/> ><c:out value="${genre.name}"/></option>
                         </c:forEach>
                     </select>

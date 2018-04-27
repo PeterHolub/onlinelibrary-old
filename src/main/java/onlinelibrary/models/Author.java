@@ -5,31 +5,31 @@ import java.util.Objects;
 
 public class Author implements Serializable {
 
-    private String name;
+    private String authorname;
     private long id;
-    
+
     public Author() {
+        }
+
+    public Author(String authorname, long id) {
+        this.authorname = authorname;
+        this.id = id;
     }
 
-    public Author(String name, long id) {
-        this.name = name;
-        this.id = id;
+    public String getAuthorname() {
+        return authorname;
+    }
+
+    public void setAuthorname(String authorname) {
+        this.authorname = authorname;
     }
 
     public long getId() {
         return id;
     }
-    
+
     public void setId(long id) {
         this.id = id;
-    }
-    
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override
@@ -38,12 +38,12 @@ public class Author implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Author author = (Author) o;
         return id == author.id &&
-                Objects.equals(name, author.name);
+                Objects.equals(authorname, author.authorname);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(name, id);
+        return Objects.hash(authorname, id);
     }
 }

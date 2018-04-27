@@ -7,7 +7,7 @@ import onlinelibrary.util.DatabaseConnection;
 
 public class GenreImpl {
 
-    private ArrayList<Genre> genreList = new ArrayList<Genre>();
+    private ArrayList<Genre> genreList = new ArrayList<>();
 
     private ArrayList<Genre> getGenres() {
 

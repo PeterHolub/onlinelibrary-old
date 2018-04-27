@@ -24,7 +24,7 @@ public class AuthorImpl {
             while (resultSet.next()) {
                 Author author = new Author();
                 author.setId(resultSet.getLong("id"));
-                author.setName(resultSet.getString("authorname"));
+                author.setAuthorname(resultSet.getString("authorname"));
                 authorList.add(author);
             }
 

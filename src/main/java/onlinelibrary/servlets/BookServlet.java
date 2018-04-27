@@ -1,8 +1,13 @@
 package onlinelibrary.servlets;
 
+import onlinelibrary.daoimpl.AuthorImpl;
 import onlinelibrary.daoimpl.BookImpl;
+import onlinelibrary.daoimpl.GenreImpl;
 import onlinelibrary.enums.SearchType;
+import onlinelibrary.models.Author;
 import onlinelibrary.models.Book;
+import onlinelibrary.models.Genre;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -70,6 +75,19 @@ public class BookServlet extends HttpServlet {
 //Create var for script to keeping selected option after refresh
         String dropList = request.getParameter("search_option");
         request.getSession().setAttribute("dropList", dropList);
+
+
+
+        GenreImpl genreImpl = new GenreImpl();
+        AuthorImpl authorImpl = new AuthorImpl();
+
+        ArrayList<Genre> genreList = genreImpl.getGenreList();
+        ArrayList<Author> authorList = authorImpl.getAuthorList();
+
+        request.getServletContext().setAttribute("listGenres", genreList);
+        request.getServletContext().setAttribute("listAuthor", authorList);
+
+
 
 
         request.getRequestDispatcher("/resources/jsp/books.jsp").forward(request, response);

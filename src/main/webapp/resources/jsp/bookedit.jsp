@@ -11,20 +11,6 @@
 </head>
 <body>
 <div align="center">
-
-    <sql:setDataSource
-            var="library"
-            driver="org.sqlite.JDBC"
-            url="jdbc:sqlite:./db/onlinelibrary.db"
-    />
-    <sql:query var="listAuthor" dataSource="${library}">
-    SELECT * FROM author;
-    </sql:query>
-    <sql:query var="listGenre" dataSource="${library}">
-    SELECT * FROM genre;
-    </sql:query>
-
-
     <div align="center">
 
         <h1>Book Edit Page</h1>
@@ -46,7 +32,7 @@
                     <td>
                         <select name="author name" select id="author name">
 
-                            <c:forEach var="author" items="${listAuthor.rows}">
+                            <c:forEach var="author" items="${listAuthor}">
                                 <option value=
                                         <c:out value="${author.id}"/>><c:out value="${author.authorname}"/></option>
                             </c:forEach>
@@ -58,9 +44,9 @@
                     <td>
                         <select name="genre" select id="genre">
 
-                            <c:forEach var="genre" items="${listGenre.rows}">
+                            <c:forEach var= "genres" items="${listGenres}">
                                 <option value=
-                                        <c:out value="${genre.id}"/>><c:out value="${genre.name}"/></option>
+                                        <c:out value="${genres.id}"/>><c:out value="${genres.name}"/></option>
                             </c:forEach>
                         </select>
 
