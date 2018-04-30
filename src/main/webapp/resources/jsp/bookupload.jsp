@@ -11,19 +11,6 @@
     <title>Book Upload</title>
 </head>
 <body>
-
-<%--<sql:setDataSource--%>
-        <%--var="library"--%>
-        <%--driver="org.sqlite.JDBC"--%>
-        <%--url="jdbc:sqlite:./db/onlinelibrary.db"--%>
-<%--/>--%>
-<%--<sql:query var="listAuthor" dataSource="${library}">--%>
-    <%--SELECT * FROM author;--%>
-<%--</sql:query>--%>
-<%--<sql:query var="listGenre" dataSource="${library}">--%>
-    <%--SELECT * FROM genre;--%>
-<%--</sql:query>--%>
-
 <div align="center">
 
     <h1 style="color:#00688f">Book Upload Page</h1>

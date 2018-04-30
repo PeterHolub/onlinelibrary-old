@@ -6,12 +6,13 @@ import java.util.Objects;
 public class Author implements Serializable {
 
     private String authorname;
-    private long id;
+
+    private int id;
 
     public Author() {
         }
 
-    public Author(String authorname, long id) {
+    public Author(String authorname, int id) {
         this.authorname = authorname;
         this.id = id;
     }
@@ -28,7 +29,7 @@ public class Author implements Serializable {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -45,5 +46,13 @@ public class Author implements Serializable {
     public int hashCode() {
 
         return Objects.hash(authorname, id);
+    }
+
+    @Override
+    public String toString() {
+        return "Author{" +
+                "authorname='" + authorname + '\'' +
+                ", id=" + id +
+                '}';
     }
 }

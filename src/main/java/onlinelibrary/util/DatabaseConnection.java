@@ -1,15 +1,34 @@
 package onlinelibrary.util;
-import java.sql.*;
 
+import java.io.*;
+import java.sql.*;
+import java.util.Properties;
+
+//Database connection initialization
 public class DatabaseConnection {
-    private static final String DB_DRIVER = "org.sqlite.JDBC";
-    private static final String DB_URL = "jdbc:sqlite:./db/onlinelibrary.db";
+
+    private Properties getProperties() {
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("databaseconnection.properties");
+
+        Properties dataBaseProperties = new Properties();
+
+        // load the inputStream using the PropertiesFile
+        try {
+            dataBaseProperties.load(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return dataBaseProperties;
+    }
 
     public static Connection getConnection() {
+        DatabaseConnection databaseConnection = new DatabaseConnection();
+
+
         Connection connection = null;
         try {
-            Class.forName(DB_DRIVER);
-            connection = DriverManager.getConnection(DB_URL);
+            Class.forName(databaseConnection.getProperties().getProperty("dbDriver"));
+            connection = DriverManager.getConnection(databaseConnection.getProperties().getProperty("dbUrl"));
 
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();

@@ -6,9 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.sql.SQLException;
-
-
+//Servlet for deleting book from database
 @WebServlet("/BookDelete")
 
 public class BookDelete extends HttpServlet {
@@ -17,12 +15,10 @@ public class BookDelete extends HttpServlet {
 
         String bookName = request.getParameter("deleteId");
         BookImpl bookImpl = new BookImpl();
-        try {
-            bookImpl.deleteBook(bookName);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        request.getRequestDispatcher("/resources/jsp/books.jsp").forward(request, response);
+
+        bookImpl.deleteBook(bookName);
+
+        request.getRequestDispatcher("/BookServlet").forward(request, response);
 
     }
 

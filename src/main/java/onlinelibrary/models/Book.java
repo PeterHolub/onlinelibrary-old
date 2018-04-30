@@ -5,19 +5,22 @@ import java.util.Objects;
 
 public class Book implements Serializable {
 
-    private long id;
+    private int id;
     private String name;
-    private byte[] content;// pdf файла загружаем в это поле только в нужный момент (для просмотра)
+    private byte[] content;
     private String description;
     private String genre;
     private String author;
     private byte[] image;
 
-    public long getId() {
+    public Book() {
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

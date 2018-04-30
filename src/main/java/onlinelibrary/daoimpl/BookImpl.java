@@ -1,70 +1,77 @@
 package onlinelibrary.daoimpl;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 
+import onlinelibrary.dao.BookDAO;
 import onlinelibrary.models.Book;
 import onlinelibrary.util.DatabaseConnection;
 import onlinelibrary.enums.SearchType;
 import org.apache.commons.io.IOUtils;
 
-public class BookImpl {
+public class BookImpl implements BookDAO {
 
     private ArrayList<Book> bookList = new ArrayList<>();
+    private Connection connection = null;
 
-    private ArrayList<Book> getBooks(String sql) {
+    @Override
+    public ArrayList<Book> getBooks(String sql) {
 
         Statement statement = null;
         ResultSet resultSet = null;
-        Connection connection = null;
+
+        connection = DatabaseConnection.getConnection();
 
         try {
-            connection = DatabaseConnection.getConnection();
             statement = connection.createStatement();
+
 
             resultSet = statement.executeQuery(sql);
 
             while (resultSet.next()) {
                 Book book = new Book();
-                book.setId(resultSet.getLong("id"));
+                book.setId(resultSet.getInt("id"));
                 book.setName(resultSet.getString("name"));
                 book.setGenre(resultSet.getString("genre"));
                 book.setDescription(resultSet.getString("description"));
                 book.setAuthor(resultSet.getString("author"));
                 bookList.add(book);
-                System.out.println(resultSet.getString("name"));
             }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
             try {
-                if (statement != null) {
+                if (statement != null)
                     statement.close();
-                }
-                if (resultSet != null) {
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (resultSet != null)
                     resultSet.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException ex) {
-                ex.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
         return bookList;
     }
 
+    @Override
     public ArrayList<Book> getAllBooks() {
         return getBooks("select b.id, b.name,b.description,"
                 + "a.authorname as author, g.name as genre from book b inner join author a on b.author_id=a.id "
                 + "inner join genre g on b.genre_id=g.id order by b.name");
     }
 
-    public ArrayList<Book> getBooksByGenre(long id) {
+    @Override
+    public ArrayList<Book> getBooksByGenre(int id) {
         if (id == 0) {
             return getAllBooks();
         } else {
@@ -76,24 +83,26 @@ public class BookImpl {
         }
     }
 
+    @Override
     public ArrayList<Book> getBooksBySearch(String searchStr, SearchType type) {
         StringBuilder sql = new StringBuilder("select b.id,b.name,b.description, a.authorname as author, g.name as genre from book b "
                 + "inner join author a on b.author_id=a.id "
                 + "inner join genre g on b.genre_id=g.id ");
 
         if (type == SearchType.AUTHOR) {
-            sql.append("where lower(a.authorname) like '%" + searchStr.toLowerCase() + "%' order by b.name ");
+            sql.append("where lower(a.authorname) like '%").append(searchStr.toLowerCase()).append("%' order by b.name ");
 
         } else if (type == SearchType.TITLE) {
-            sql.append("where lower(b.name) like '%" + searchStr.toLowerCase() + "%' order by b.name ");
+            sql.append("where lower(b.name) like '%").append(searchStr.toLowerCase()).append("%' order by b.name ");
         } else if (type == SearchType.GENRE) {
-            sql.append("where lower(g.name) like '%" + searchStr.toLowerCase() + "%' order by b.name ");
+            sql.append("where lower(g.name) like '%").append(searchStr.toLowerCase()).append("%' order by b.name ");
         }
         sql.append("limit 0,5");
 
         return getBooks(sql.toString());
     }
 
+    @Override
     public ArrayList<Book> getBooksByUserFavorites(String userFavorites) {
         return getBooks("select b.id,b.name,b.description, a.authorname as author, g.name as genre from book b  "
                 + "inner join author a on b.author_id=a.id "
@@ -102,141 +111,275 @@ public class BookImpl {
                 + "where user_id='" + userFavorites + "'");
     }
 
+    @Override
     public ArrayList<Book> getBookById(int id) {
         return getBooks("select b.id,b.name,b.description, a.authorname as author, g.name as genre from book b inner join author a on b.author_id=a.id inner join genre g on b.genre_id=g.id where b.id=" + id + "");
     }
 
-    public void deleteBook(String bookName) throws SQLException {
-        Connection connection;
+    @Override
+    public void deleteBook(String bookName) {
+
         connection = DatabaseConnection.getConnection();
 
-        String sqlBook = "DELETE FROM book WHERE Id=?";
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("DELETE FROM book WHERE Id=?");
 
-        PreparedStatement statement = connection.prepareStatement(sqlBook);
-        statement.setString(1, bookName);
+            statement.setString(1, bookName);
 
-        statement.executeUpdate();
-        connection.close();
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            if (statement != null)
+                statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public byte[] getImage(int imageId) throws SQLException {
+    @Override
+    public byte[] getImage(int imageId) {
 
-        Connection connection;
         connection = DatabaseConnection.getConnection();
+
         byte[] image = new byte[0];
-        PreparedStatement statement = connection.prepareStatement("SELECT image FROM book WHERE Id=?");
 
-        statement.setInt(1, imageId);
-
-        ResultSet resultSet = statement.executeQuery();
-
-        if (resultSet.next())
-            image = resultSet.getBytes("image");
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = connection.prepareStatement("SELECT image FROM book WHERE Id=?");
 
 
-        connection.close();
+            statement.setInt(1, imageId);
+
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next())
+                image = resultSet.getBytes("image");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            if (resultSet != null)
+                resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            if (resultSet != null)
+                statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return image;
 
     }
 
-    public byte[] getBook(int bookId) throws SQLException {
-        Connection connection;
+    @Override
+    public byte[] getBook(int bookId) {
+
         connection = DatabaseConnection.getConnection();
         byte[] book = new byte[0];
-        PreparedStatement statement = connection.prepareStatement("SELECT content FROM book WHERE Id=?");
 
-        statement.setInt(1, bookId);
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = connection.prepareStatement("SELECT content FROM book WHERE Id=?");
 
-        ResultSet resultSet = statement.executeQuery();
 
-        if (resultSet.next())
-            book = resultSet.getBytes("content");
+            statement.setInt(1, bookId);
 
-        connection.close();
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                book = resultSet.getBytes("content");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null)
+                    resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (statement != null)
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         return book;
 
     }
 
-    public String getBookName(int bookId) throws SQLException {
-        Connection connection;
+    @Override
+    public String getBookName(int bookId) {
+
         connection = DatabaseConnection.getConnection();
         String bookName = null;
-        PreparedStatement statement = connection.prepareStatement("SELECT name FROM book WHERE Id=?");
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = connection.prepareStatement("SELECT name FROM book WHERE Id=?");
 
-        statement.setInt(1, bookId);
 
-        ResultSet resultSet = statement.executeQuery();
+            statement.setInt(1, bookId);
 
-        if (resultSet.next())
-            bookName = resultSet.getString("name");
-        connection.close();
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                bookName = resultSet.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+
+
+            try {
+                if (resultSet != null)
+                    resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (statement != null)
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         return bookName;
 
     }
 
-    public boolean uploadBook(String bookName, String description, InputStream inputStreamImage, InputStream inputStreamContent, int genre, int authorName) throws SQLException, IOException {
+    @Override
+    public boolean uploadBook(String bookName, String description, InputStream inputStreamImage, InputStream inputStreamContent, int genre, int authorName) {
 
-        boolean result;
-        Connection connection;
+        boolean result = false;
 
         connection = DatabaseConnection.getConnection();
 
-        String sqlBook = "INSERT INTO book (name, description,image, content, genre_id, author_id) VALUES (?, ?,?,?,?,?)";
-        PreparedStatement statementBook = connection.prepareStatement(sqlBook);
-        statementBook.setString(1, bookName);
-        statementBook.setString(2, description);
-        statementBook.setInt(5, genre);
-        statementBook.setInt(6, authorName);
 
-        if (inputStreamImage != null) {
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("INSERT INTO book (name, description,image, content, genre_id, author_id) VALUES (?,?,?,?,?,?)");
 
-            statementBook.setBytes(3, IOUtils.toByteArray(inputStreamImage));
-            statementBook.setBytes(4, IOUtils.toByteArray(inputStreamContent));
-        } else {
-            System.out.println("inputStream is null");
+            statement.setString(1, bookName);
+            statement.setString(2, description);
+            statement.setInt(5, genre);
+            statement.setInt(6, authorName);
+
+            if (inputStreamImage != null) {
+
+                statement.setBytes(3, IOUtils.toByteArray(inputStreamImage));
+                statement.setBytes(4, IOUtils.toByteArray(inputStreamContent));
+            }
+
+            int rowBook = statement.executeUpdate();
+
+            result = rowBook > 0;
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null)
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-        int rowBook = statementBook.executeUpdate();
 
-        result = rowBook > 0;
-        connection.close();
+
         return result;
     }
 
-    public boolean bookUpdate(int genre, int authorName, String bookName, String description, int updateId, InputStream inputStreamImage, InputStream inputStreamContent) throws SQLException, IOException {
-        boolean result;
-        Connection connection;
+    @Override
+    public boolean bookUpdate(int genre, int authorName, String bookName, String description, int updateId, InputStream inputStreamImage, InputStream inputStreamContent) {
+        boolean result = false;
 
         connection = DatabaseConnection.getConnection();
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("UPDATE book SET genre_id =(?), author_id = (?), name =(?), description =(?) WHERE id =(?)");
 
-        String sqlID = "UPDATE book SET genre_id =(?), author_id = (?), name =(?), description =(?) WHERE id =(?)";
-        PreparedStatement statementID = connection.prepareStatement(sqlID);
-        statementID.setInt(1, genre);
-        statementID.setInt(2, authorName);
-        statementID.setString(3, bookName);
-        statementID.setString(4, description);
-        statementID.setInt(5, updateId);
+            statement.setInt(1, genre);
+            statement.setInt(2, authorName);
+            statement.setString(3, bookName);
+            statement.setString(4, description);
+            statement.setInt(5, updateId);
 
-        if (inputStreamImage.available() > 0) {
+            if (inputStreamImage.available() > 0) {
 
-            String sqlImage = "UPDATE book SET image =(?) WHERE id =(?)";
-            PreparedStatement statementImage = connection.prepareStatement(sqlImage);
-            statementImage.setBytes(1, IOUtils.toByteArray(inputStreamImage));
-            statementImage.setInt(2, updateId);
-            statementImage.executeUpdate();
+                PreparedStatement statementImage = connection.prepareStatement("UPDATE book SET image =(?) WHERE id =(?)");
+                statementImage.setBytes(1, IOUtils.toByteArray(inputStreamImage));
+                statementImage.setInt(2, updateId);
+                statementImage.executeUpdate();
+                statementImage.close();
+            }
+
+            if (inputStreamContent.available() > 0) {
+
+                PreparedStatement statementContent = connection.prepareStatement("UPDATE book SET content =(?) WHERE id =(?)");
+                statementContent.setBytes(1, IOUtils.toByteArray(inputStreamContent));
+                statementContent.setInt(2, updateId);
+                statementContent.executeUpdate();
+                statementContent.close();
+            }
+
+            int rowBook = statement.executeUpdate();
+
+            result = rowBook > 0;
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null)
+                    statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-
-        if (inputStreamContent.available() > 0) {
-
-            String sqlContent = "UPDATE book SET content =(?) WHERE id =(?)";
-            PreparedStatement statementContent = connection.prepareStatement(sqlContent);
-            statementContent.setBytes(1, IOUtils.toByteArray(inputStreamContent));
-            statementContent.setInt(2, updateId);
-            statementContent.executeUpdate();
-        }
-
-        int rowBook = statementID.executeUpdate();
-
-        result = rowBook > 0;
 
 
         return result;

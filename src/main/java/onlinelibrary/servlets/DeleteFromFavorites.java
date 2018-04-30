@@ -6,7 +6,6 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.sql.SQLException;
 
 
 @WebServlet("/DeleteFromFavorites")
@@ -17,13 +16,9 @@ public class DeleteFromFavorites extends HttpServlet {
         String userId = request.getParameter("username");
         int bookId = Integer.parseInt(request.getParameter("bookId"));
 
+        favoritesImpl.deleteFromFavorites(userId, bookId);
 
-        try {
-            favoritesImpl.deleteFromFavorites(userId, bookId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        request.getRequestDispatcher("/resources/jsp/books.jsp").forward(request, response);
+        request.getRequestDispatcher("/BookServlet").forward(request, response);
     }
 }
 

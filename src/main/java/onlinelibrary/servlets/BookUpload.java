@@ -3,11 +3,10 @@ package onlinelibrary.servlets;
 import onlinelibrary.daoimpl.BookImpl;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.*;
 import javax.servlet.http.*;
-
+//Uploading book to database, using multipart and input stream
 @WebServlet("/BookUpload")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 10,    // 10 MB
         maxFileSize = 1024 * 1024 * 80,        // 50 MB
@@ -15,11 +14,10 @@ import javax.servlet.http.*;
 public class BookUpload extends HttpServlet {
 
 
-    protected void doPost(HttpServletRequest request,
-                          HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         BookImpl bookImpl = new BookImpl();
-        boolean uploadResult = false;
+        boolean uploadResult;
         String message;
         String bookName = request.getParameter("book name");
         String description = request.getParameter("description");
@@ -35,12 +33,7 @@ public class BookUpload extends HttpServlet {
         inputStreamImage = filePart1.getInputStream();
         inputStreamContent = filePart2.getInputStream();
 
-
-        try {
-            uploadResult = bookImpl.uploadBook(bookName, description, inputStreamImage, inputStreamContent, genre, authorName);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        uploadResult = bookImpl.uploadBook(bookName, description, inputStreamImage, inputStreamContent, genre, authorName);
 
         if (uploadResult) {
             message = "File uploaded and saved into database";

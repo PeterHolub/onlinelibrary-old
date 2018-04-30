@@ -2,10 +2,10 @@ package onlinelibrary.servlets;
 
 import onlinelibrary.daoimpl.BookImpl;
 import java.io.IOException;
-import java.sql.SQLException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
+//Servlet for sending Images as response
 @WebServlet("/ShowImage")
 public class ShowImage extends HttpServlet {
     @Override
@@ -17,12 +17,7 @@ public class ShowImage extends HttpServlet {
 
         response.setContentType("image/jpeg");
 
-        try {
-            response.getOutputStream().write(bookImpl.getImage(imageId));
-        } catch (SQLException e) {
-            e.printStackTrace();
+        response.getOutputStream().write(bookImpl.getImage(imageId));
+
         }
-
-
-    }
 }

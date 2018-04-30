@@ -7,11 +7,6 @@
 
 <%@include file="/WEB-INF/jspf/left_menu.jspf" %>
 
-<sql:setDataSource
-        var="library"
-        driver="org.sqlite.JDBC"
-        url="jdbc:sqlite:./db/onlinelibrary.db"
-/>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -38,6 +33,7 @@
         }
     </script>
 
+
     <c:forEach var="book" items="${currentBookList}">
 
         <div class="book_info">
@@ -63,12 +59,19 @@
                         </button>
                     </form>
 
-                    <sql:query var="favorite" dataSource="${library}">
-                        SELECT * FROM favorites WHERE book_id=(<c:out value="${book.id}"/>) AND user_id='<c:out
-                            value="${username}"/>'
-                    </sql:query>
+
+                    <c:set var="contains" value="false"/>
+                    <c:forEach var="item" items="${favorite}">
+                        <c:if test="${item.bookId eq book.id}">
+
+                            <c:set var="contains" value="true"/>
+                        </c:if>
+
+                    </c:forEach>
+
                     <c:choose>
-                        <c:when test="${favorite.rowCount == 0}">
+
+                        <c:when test="${contains==false}">
 
                             <form action="${pageContext.servletContext.contextPath}/AddToFavorites" method="post">
                                 <input type="hidden" name="username" value="<c:out value="${username}"/>"/>
@@ -109,6 +112,5 @@
         </div>
     </c:forEach>
 </div>
-
 </body>
 </html>

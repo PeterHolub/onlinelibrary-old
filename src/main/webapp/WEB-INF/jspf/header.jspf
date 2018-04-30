@@ -52,7 +52,7 @@
 
         </div>
         <div class="search_form">
-            <form name="search_form" method="GET"
+            <form name="search_form" method="post"
                   action="${pageContext.servletContext.contextPath}/BookServlet">
                 <input type="text" name="search_string" required value="" size="90"/>
                 <input class="search_button" type="submit" value="Search"/>

@@ -1,5 +1,8 @@
 package onlinelibrary.dao;
 
-public interface GenreDAO {
+import onlinelibrary.models.Genre;
+import java.util.ArrayList;
 
+public interface GenreDAO {
+    ArrayList<Genre> getGenreList();
 }

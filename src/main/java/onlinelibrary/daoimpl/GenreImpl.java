@@ -2,57 +2,57 @@ package onlinelibrary.daoimpl;
 
 import java.sql.*;
 import java.util.ArrayList;
+
+import onlinelibrary.dao.GenreDAO;
 import onlinelibrary.models.Genre;
 import onlinelibrary.util.DatabaseConnection;
 
-public class GenreImpl {
-
-    private ArrayList<Genre> genreList = new ArrayList<>();
-
-    private ArrayList<Genre> getGenres() {
-
+public class GenreImpl implements GenreDAO {
+    @Override
+    public ArrayList<Genre> getGenreList() {
+        ArrayList<Genre> genreList = new ArrayList<>();
+        Connection connection;
         Statement statement = null;
         ResultSet resultSet = null;
-        Connection connection = null;
-        try {
-            connection = DatabaseConnection.getConnection();
 
+        connection = DatabaseConnection.getConnection();
+
+        try {
             statement = connection.createStatement();
-            resultSet = statement.executeQuery("select * from genre order by name");
+
+            resultSet = statement.executeQuery("SELECT * FROM genre ORDER BY name");
             while (resultSet.next()) {
                 Genre genre = new Genre();
                 genre.setName(resultSet.getString("name"));
-                genre.setId(resultSet.getLong("id"));
+                genre.setId(resultSet.getInt("id"));
                 genreList.add(genre);
             }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();;
+        } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
             try {
-                if (statement != null) {
+                if (statement != null)
                     statement.close();
-                }
-                if (resultSet!= null) {
-                    resultSet.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException ex) {
-                ex.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
+            try {
+                if (resultSet != null)
+                    resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         }
 
         return genreList;
     }
 
-    public ArrayList<Genre> getGenreList() {
-        if (!genreList.isEmpty()) {
-            return genreList;
-        } else {
-            return getGenres();
-        }
-    }
+
 }
 

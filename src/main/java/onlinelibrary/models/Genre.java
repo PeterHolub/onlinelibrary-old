@@ -6,12 +6,12 @@ import java.util.Objects;
 public class Genre implements Serializable {
 
     private String name;
-    private long id;
+    private int id;
 
     public Genre() {
     }
 
-    public Genre(String name, long id) {
+    public Genre(String name, int id) {
         this.name = name;
         this.id = id;
     }
@@ -28,7 +28,7 @@ public class Genre implements Serializable {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -45,5 +45,13 @@ public class Genre implements Serializable {
     public int hashCode() {
 
         return Objects.hash(name, id);
+    }
+
+    @Override
+    public String toString() {
+        return "Genre{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                '}';
     }
 }

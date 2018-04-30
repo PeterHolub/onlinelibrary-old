@@ -10,7 +10,6 @@
 </head>
 
 <body>
-<%session.invalidate(); %>
 
 <div class="main">
 

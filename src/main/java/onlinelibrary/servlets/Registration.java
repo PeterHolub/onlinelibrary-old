@@ -6,8 +6,8 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.sql.SQLException;
 
+//Users registration servlet (checks if user exists, if not registration = available, if exist sends message that user exist)
 @WebServlet("/Registration")
 public class Registration extends HttpServlet {
     @Override
@@ -17,16 +17,13 @@ public class Registration extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String groupId = "user";
-        try {
-            for (Users users : usersImpl.getUsersList()) {
 
-                if (users.getUserId().equals(username)) {
-                    result = false;
-                    break;
-                }
+        for (Users users : usersImpl.getUsersList()) {
+
+            if (users.getUserId().equals(username)) {
+                result = false;
+                break;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         if (result) {
             try {
@@ -40,7 +37,6 @@ public class Registration extends HttpServlet {
         } else {
             request.setAttribute("RegisterError", "Username already exist");
             request.getRequestDispatcher("/register.jsp").forward(request, response);
-
-        }
+            }
     }
 }

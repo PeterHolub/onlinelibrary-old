@@ -22,7 +22,7 @@
 </c:if>
 
 <div class="book_list">
-    <c:forEach items="${bookDetailsList}" var="bookDetails">
+    <c:forEach items="${bookDetailsList}" var="bookDetails" >
         <script>
             function ConfirmDelete() {
                 var x = confirm("Are you sure you want to delete?");

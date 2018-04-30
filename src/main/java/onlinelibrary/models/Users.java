@@ -50,4 +50,13 @@ public class Users  implements Serializable{
 
         return Objects.hash(userId, password, group_id);
     }
+
+    @Override
+    public String toString() {
+        return "Users{" +
+                "userId='" + userId + '\'' +
+                ", password='" + password + '\'' +
+                ", group_id='" + group_id + '\'' +
+                '}';
+    }
 }

@@ -11,8 +11,6 @@
 </head>
 
 <body>
-<%session.invalidate(); %>
-
 <div class="main">
 
     <div class="content">

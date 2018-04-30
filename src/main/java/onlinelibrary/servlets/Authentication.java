@@ -6,9 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.sql.*;
-
-
+//Servlet for authentication and writing to session username and role
 @WebServlet("/Authentication")
 public class Authentication extends HttpServlet {
 
@@ -18,25 +16,19 @@ public class Authentication extends HttpServlet {
         UsersImpl usersImpl = new UsersImpl();
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        try {
-            for (Users users : usersImpl.getUsersList()) {
 
-                if (users.getUserId().equals(username) && users.getPassword().equals(password)) {
-                    result = true;
-                    break;
-                }
+        for (Users users : usersImpl.getUsersList()) {
+
+            if (users.getUserId().equals(username) && users.getPassword().equals(password)) {
+                result = true;
+                break;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
+
         if (result) {
 
-            String userRole = null;
-            try {
-                userRole = usersImpl.getGroupId(username);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            String userRole = usersImpl.getGroupId(username);
+
 
             HttpSession session = request.getSession();
 

@@ -7,8 +7,11 @@
 
     <c:if test="${(userRole == 'admin')||(userRole == 'user')}">
         <div align="left">
-            <a href="${pageContext.servletContext.contextPath}/BookServlet?userfavorites=<c:out value="${username}"/>"
-               class="favoriteButton" style="color: #FFFFFF; text-decoration: none;">Favorites</a>
+            <form action="${pageContext.servletContext.contextPath}/BookServlet" method="post">
+                <button class="favoriteButton" type="submit" name="userfavorites"
+                        value="<c:out value="${username}"/>">Favorites
+                </button>
+            </form>
         </div>
     </c:if>
     <h4>Genres:</h4>
@@ -18,6 +21,7 @@
         <c:forEach var="genre" items="${listGenres}">
             <c:choose>
                 <c:when test="${(selectedGenre)==(genre.id)}">
+
                     <li><a style="color:red;"
                            href="${pageContext.servletContext.contextPath}/BookServlet?genre_id=<c:out value="${genre.id}"/>"><c:out
                             value="${genre.name}"/></a></li>
