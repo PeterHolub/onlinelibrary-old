@@ -1,5 +1,5 @@
 # Online Library
-Implementation of Online Library using Java SE, JSP, JSTL tag library, SQLite database and Jetty.
+Implementation of Online Library using Java SE, JSP, JSTL tag library, JavaScript SQLite database and Jetty.
 ## Prerequisites
 * **JDK >= 1.8.0_131**;
 * **Apache Maven >= 3.5.2**
