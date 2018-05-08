@@ -41,7 +41,7 @@ public class UsersImpl implements UsersDAO {
                 e.printStackTrace();
             }
             try {
-                if (resultSet != null)
+                if (statement != null)
                     statement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
